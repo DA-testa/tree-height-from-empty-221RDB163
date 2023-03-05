@@ -1,33 +1,62 @@
-# python3
-
 import sys
 import threading
-import numpy
 
+def CalculateHeight(parents_count, node):
 
-def compute_height(n, parents):
-    # Write this function
-    max_height = 0
-    # Your code here
-    return max_height
+    children = []
+    for i in range(parents_count):
+        children.append([])
 
+    for i in range(parents_count):
+        if node[i] != -1:
+            children[node[i]].append(i)
+            continue
+        branche = i
+
+    def CalculateDepth(branche):
+        lowest_branch = 0
+        
+        for child in children[branche]:
+            depth = CalculateDepth(child)
+            lowest_branch = lowest_branch if lowest_branch > depth else depth
+        lowest_branch += 1
+
+        return lowest_branch
+
+    return CalculateDepth(branche)
 
 def main():
-    # implement input form keyboard and from files
-    
-    # let user input file name to use, don't allow file names with letter a
-    # account for github input inprecision
-    
-    # input number of elements
-    # input values in one variable, separate with space, split these values in an array
-    # call the function and output it's result
-    pass
+    input_type = input()
 
-# In Python, the default limit on recursion depth is rather low,
-# so raise it here for this problem. Note that to take advantage
-# of bigger stack, we have to launch the computation in a new thread.
-sys.setrecursionlimit(10**7)  # max depth of recursion
-threading.stack_size(2**27)   # new thread will get stack of such size
+    if "I" in input_type:
+        parents_count = int(input())
+
+        input_branches = input().split(" ")
+        branches = []
+
+        for i in range( len(input_branches) ):
+            branches.append(int(input_branches[i]))
+
+        tree_height = CalculateHeight(parents_count, branches)
+        print(tree_height)
+
+    elif "F" in input_type:
+        file_name = input()
+
+        with open( f"test/{file_name}", "r" ) as file:
+            parents_count = int(file.readline())
+
+            input_branches = file.readline().split()
+            branches = []
+            for i in range( len(input_branches) ):
+                branches.append(int(input_branches[i]))
+
+            tree_height = CalculateHeight(parents_count, branches)
+
+            print(tree_height)
+    else:
+        exit()
+
+sys.setrecursionlimit(10**7)
+threading.stack_size(2**27)
 threading.Thread(target=main).start()
-main()
-# print(numpy.array([1,2,3]))
